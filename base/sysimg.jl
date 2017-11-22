@@ -441,8 +441,7 @@ include("missing.jl")
 # libgit2 support
 include("libgit2/libgit2.jl")
 
-# package manager
-include("pkg/pkg.jl")
+const PKG_MODULE_REF = Ref{Module}()
 
 # worker threads
 include("threadcall.jl")
@@ -525,6 +524,7 @@ Base.require(Base, :SuiteSparse)
 Base.require(Base, :Test)
 Base.require(Base, :Unicode)
 Base.require(Base, :REPL)
+Base.require(Base, :Pkg)
 
 @eval Base begin
     @deprecate_binding Test root_module(Base, :Test) true ", run `using Test` instead"
