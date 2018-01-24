@@ -19,14 +19,8 @@ true
 ```
 """
 function startswith(a::AbstractString, b::AbstractString)
-    i = start(a)
-    j = start(b)
-    while !done(a,i) && !done(b,i)
-        c, i = next(a,i)
-        d, j = next(b,j)
-        (c != d) && (return false)
-    end
-    done(b,i)
+    a, b = Iterators.Stateful(a), Iterators.Stateful(b)
+    all(splat(==), zip(a, b)) && isempty(b)
 end
 startswith(str::AbstractString, chars::Chars) = !isempty(str) && first(str) in chars
 
@@ -45,18 +39,8 @@ true
 ```
 """
 function endswith(a::AbstractString, b::AbstractString)
-    i = lastindex(a)
-    j = lastindex(b)
-    a1 = start(a)
-    b1 = start(b)
-    while a1 <= i && b1 <= j
-        c = a[i]
-        d = b[j]
-        (c != d) && (return false)
-        i = prevind(a,i)
-        j = prevind(b,j)
-    end
-    j < b1
+    a, b = Iterators.Stateful.(Iterators.reverse.((a,b)))
+    all(splat(==), zip(a, b)) && isempty(b)
 end
 endswith(str::AbstractString, chars::Chars) = !isempty(str) && last(str) in chars
 

@@ -125,28 +125,14 @@ function _searchindex(s::Union{AbstractString,ByteArray},
         return 1 <= i <= nextind(s,lastindex(s)) ? i :
                throw(BoundsError(s, i))
     end
-    t1, j2 = next(t,start(t))
+    t1, trest = Iterators.peel(t)
     while true
         i = findnext(equalto(t1),s,i)
         if i === nothing return 0 end
-        c, ii = next(s,i)
-        j = j2; k = ii
-        matched = true
-        while !done(t,j)
-            if done(s,k)
-                matched = false
-                break
-            end
-            c, k = next(s,k)
-            d, j = next(t,j)
-            if c != d
-                matched = false
-                break
-            end
-        end
-        if matched
-            return i
-        end
+        ii = nextind(s, i)
+        a = Iterators.Stateful(trest)
+        matched = all(splat(==), zip(s[ii:end], a))
+        (isempty(a) && matched) && return i
         i = ii
     end
 end
@@ -308,30 +294,19 @@ function _rsearchindex(s::AbstractString,
         return 1 <= i <= nextind(s, lastindex(s)) ? i :
                throw(BoundsError(s, i))
     end
-    t = t isa AbstractString ? reverse(t) : t
-    rs = reverse(s)
-    l = lastindex(s)
-    t1, j2 = next(t, start(t))
+    l = endof(s)
+    t1, trest = peel(Iterators.reverse(t))
     while true
         i = findprev(equalto(t1), s, i)
         i === nothing && return 0
-        c, ii = next(rs, reverseind(rs, i))
-        j = j2; k = ii
-        matched = true
-        while !done(t, j)
-            if done(rs, k)
-                matched = false
-                break
-            end
-            c, k = next(rs, k)
-            d, j = next(t, j)
-            if c != d
-                matched = false
-                break
-            end
+        a = Iterators.Stateful(trest)
+        ii = prevind(s, i)
+        matched = all(zip(Iterators.reverse(pairs(s[1:ii])), a)) do ((idx, c), d)
+            i = idx
+            c == d
         end
-        matched && return nextind(s, reverseind(s, k))
-        i = reverseind(s, ii)
+        (matched && isempty(a)) && return i
+        i = ii
     end
 end
 
