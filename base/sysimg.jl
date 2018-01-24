@@ -563,6 +563,8 @@ Base.require(Base, :Pkg)
     @deprecate_binding REPLCompletions root_module(Base, :REPL).REPLCompletions true ", use `REPL.REPLCompletions` instead"
     @deprecate_binding Terminals       root_module(Base, :REPL).Terminals       true ", use `REPL.Terminals` instead"
 
+    @deprecate_binding(Pkg, root_module(Base, :Pkg), true, ", run `import Pkg` instead")
+
     @deprecate_stdlib readdlm  DelimitedFiles true
     @deprecate_stdlib writedlm DelimitedFiles true
     @deprecate_stdlib readcsv  DelimitedFiles true
