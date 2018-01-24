@@ -765,3 +765,6 @@ Indicate whether `x` is [`missing`](@ref).
 """
 ismissing(::Any) = false
 ismissing(::Missing) = true
+
+function take! end
+function peek end
