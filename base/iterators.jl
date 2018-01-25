@@ -1050,7 +1050,7 @@ mutable struct Stateful{VS,T}
 
     function Stateful{VS}(itr::T) where {VS,T}
         state = start(itr)
-        sv = done(itr, state) ? nothing : next(itr, start(itr))::VS
+        vs = done(itr, state) ? nothing : next(itr, start(itr))::VS
         new{VS, T}(itr, vs, 0)
     end
 end

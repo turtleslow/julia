@@ -219,7 +219,7 @@ julia> join(["apples", "bananas", "pineapples"], ", ", " and ")
 via `print(io::IOBuffer, x)`. `strings` will be printed to `io`.
 """
 function join(io::IO, strings, delim, last)
-    a = Iterators.Stateful(strings)
+    a = Iterators.Stateful{Any}(strings)
     isempty(a) && return
     print(io, take!(a))
     for str in a
@@ -229,7 +229,7 @@ function join(io::IO, strings, delim, last)
 end
 
 function join(io::IO, strings, delim)
-    a = Iterators.Stateful(strings)
+    a = Iterators.Stateful{Any}(strings)
     for str in a
         print(io, str)
         !isempty(a) && print(io, delim)
@@ -435,15 +435,12 @@ Returns:
 """
 function unindent(str::AbstractString, indent::Int; tabwidth=8)
     indent == 0 && return str
-    pos = start(str)
-    endpos = lastindex(str)
     # Note: this loses the type of the original string
-    buf = IOBuffer(StringVector(endpos), true, true)
+    buf = IOBuffer(StringVector(sizeof(str)), true, true)
     truncate(buf,0)
     cutting = true
     col = 0     # current column (0 based)
-    while pos <= endpos
-        ch, pos = next(str,pos)
+    for ch in str
         if cutting
             if ch == ' '
                 col += 1

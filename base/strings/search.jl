@@ -14,7 +14,7 @@ function findnext(pred::EqualTo{Char}, s::String, i::Integer)
         i = _search(s, first_utf8_byte(c), i)
         i == 0 && return nothing
         s[i] == c && return i
-        i = next(s, i)[2]
+        i = nextind(s, i)
     end
 end
 
@@ -106,12 +106,10 @@ function findnext(testf::Function, s::AbstractString, i::Integer)
     z = ncodeunits(s) + 1
     1 ≤ i ≤ z || throw(BoundsError(s, i))
     @inbounds i == z || isvalid(s, i) || string_index_err(s, i)
-    while !done(s,i)
-        d, j = next(s,i)
+    for (j, d) in pairs(s[i:end])
         if testf(d)
-            return i
+            return i + j - 1
         end
-        i = j
     end
     return nothing
 end
