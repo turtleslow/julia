@@ -562,7 +562,7 @@ Base.require(Base, :Pkg)
 
     @deprecate_binding(Pkg, root_module(Base, :Pkg), true, ", run `import Pkg` instead")
 
-    # @deprecate_binding(LibGit2, root_module(Base, :LibGit2), true, ", run `import LibGit2` instead")
+    @deprecate_binding(LibGit2, root_module(Base, :LibGit2), true, ", run `import LibGit2` instead")
 
     @deprecate_stdlib readdlm  DelimitedFiles true
     @deprecate_stdlib writedlm DelimitedFiles true
